@@ -1,0 +1,59 @@
+---
+- name: Install Dev Tools for Windows Kernel Development
+  hosts: windev
+  vars_files:
+    - vault.yml
+  tasks:
+    - name: Install SDK
+      ansible.windows.win_package:
+        path: https://download.microsoft.com/download/5/d/6/5d6636b7-f66a-4baf-bcd0-c663626c738d/winsdksetup.exe
+        arguments:
+          - /quiet
+
+    - name: Install WDK
+      ansible.windows.win_package:
+        path: https://download.microsoft.com/download/a/0/4/a04a6ea0-d70d-496f-9949-a73e283be017/KIT_BUNDLE_WDK_MEDIACREATION/wdksetup.exe
+        arguments:
+          - /quiet
+
+    - name: Install Visual Studio Build Tools
+      ansible.windows.win_package:
+        path: https://aka.ms/vs/17/release/vs_BuildTools.exe
+        arguments:
+          - --quiet
+          - --wait
+          - --norestart
+          - --nocache
+          - --installPath
+          - C:\BuildTools
+          - --add
+          - Microsoft.VisualStudio.Workload.MSBuildTools
+          - --add
+          - Microsoft.VisualStudio.Workload.VCTools
+          - --add
+          - Component.Microsoft.Windows.DriverKit.BuildTools
+          - --add
+          - Microsoft.VisualStudio.Component.VC.14.36.17.6.MFC.Spectre
+          - --add
+          - Microsoft.VisualStudio.Component.VC.MFC.ARM64.Spectre
+          - --add
+          - Microsoft.VisualStudio.Component.VC.14.36.17.6.ATL.Spectre
+          - --add
+          - Microsoft.VisualStudio.Component.VC.ATL.ARM64.Spectre
+          - --add
+          - Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre
+          - --add
+          - Microsoft.VisualStudio.Component.VC.Runtimes.ARM64.Spectre
+          - --add
+          - Microsoft.VisualStudio.Component.Vcpkg
+
+    - name: Add Windows Defender exclusion for folder
+      ansible.windows.win_shell: Add-MpPreference -ExclusionPath "{{ exclusion_path }}"
+      args:
+        executable: powershell.exe
+      become: true
+      vars:
+        exclusion_path: "{{ lookup('env', 'LOCALAPPDATA') }}/vcpkg"
+        ansible_become: true
+        ansible_become_method: runas
+        ansible_become_user: "{{ win_username }}"

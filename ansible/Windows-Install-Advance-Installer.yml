@@ -1,0 +1,10 @@
+---
+- name: Install Advance Installer (MSI)
+  hosts: windev
+  vars_files:
+    - vault.yml
+  tasks:
+    - name: Install Advance Installer
+      ansible.windows.win_package:
+        path: https://www.advancedinstaller.com/downloads/advinst.msi
+        arguments: /quiet

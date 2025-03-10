@@ -1,0 +1,27 @@
+---
+- name: Install Wix Toolset  (MSI)
+  hosts: windev
+  vars_files:
+    - vault.yml
+  tasks:
+    - name: Install the Wix Toolset CLI
+      ansible.windows.win_package:
+        path: https://github.com/wixtoolset/wix/releases/download/v5.0.2/wix-cli-x64.msi
+        arguments: /quiet
+
+    - name: Download WixAdditionalTools.exe
+      ansible.windows.win_get_url:
+        url: https://github.com/wixtoolset/wix/releases/download/v5.0.2/WixAdditionalTools.exe
+        dest: C:\Users\Development\Downloads\WixAdditionalTools.exe
+
+    - name: Install the Wix Additional Tools
+      ansible.windows.win_package:
+        path: C:\Users\Development\Downloads\WixAdditionalTools.exe
+        arguments:
+          - /quiet
+          - /unattended
+      become: true
+      vars:
+        ansible_become: true
+        ansible_become_method: runas
+        ansible_become_user: "{{ win_username }}"

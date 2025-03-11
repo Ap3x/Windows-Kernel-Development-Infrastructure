@@ -1,4 +1,4 @@
-# Panoptes-Infrastructure
+# Windows Kernel Development Infrastructure
 This repo contains the Terraform and Ansible scripts to setup a Windows Development Computer on Proxmox:
 - [Windows Kernel Development](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk)
 - [Github Runner Setup](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)

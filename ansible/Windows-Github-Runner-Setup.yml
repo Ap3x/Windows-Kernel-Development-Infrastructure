@@ -20,7 +20,7 @@
         registration_token: "{{ runner_token_response.json | json_query('token') }}"
 
 - name: Download Github Runner Binary, Install, and Connect to Github
-  hosts: winrunner
+  hosts: runner
   vars_files:
     - vault.yml
   tasks:
@@ -41,11 +41,14 @@
         delete_archive: true
 
     - name: Run Github Runner Config with Registration Token
-      ansible.windows.win_command: |
-        config.cmd
-        --unattended
-        --runasservice
-        --url https://github.com/{{ github_owner }}/{{ github_repo }}
-        --token {{ hostvars.localhost.registration_token }}
+      ansible.windows.win_command:
+        argv:
+          - config.cmd
+          - --unattended
+          - --runasservice
+          - --url
+          - "https://github.com/{{ github_owner }}/{{ github_repo }}"
+          - --token
+          - "{{ hostvars.localhost.registration_token }}"
       args:
         chdir: C:\actions-runner
